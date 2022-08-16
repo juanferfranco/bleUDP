@@ -1,0 +1,10 @@
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\bin\Debug\ble48StateMachine.exe.config
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\bin\Debug\ble48StateMachine.exe
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\bin\Debug\ble48StateMachine.pdb
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\bin\Debug\Windows.winmd
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.csproj.AssemblyReference.cache
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.csproj.SuggestedBindingRedirects.cache
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.csproj.CoreCompileInputs.cache
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.csproj.CopyComplete
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.exe
+C:\Users\juanfh\source\repos\ble48StateMachine\ble48StateMachine\obj\Debug\ble48StateMachine.pdb

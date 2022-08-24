@@ -27,6 +27,10 @@ namespace QuickBlueToothLE
         private static Socket s = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
         private static IPAddress broadcast = IPAddress.Parse("127.0.0.1");
         private static IPEndPoint ep = new IPEndPoint(broadcast, 3300);
+        private static UInt16 previousCumulativeCrankRevolutions = 0;
+        private static UInt16 previousLastCrankEventTime = 0;
+        private static UInt16 RPM = 0;
+
 
         static async Task Main(string[] args)
         {
@@ -113,6 +117,14 @@ namespace QuickBlueToothLE
 
                             }
 
+                            if (Console.KeyAvailable == true)
+                            {
+                                Console.ReadKey(true);
+                                deviceWatcher.Stop();
+                                return;
+
+                            }
+
                             break;
                         }
                     case SensorState.CONNECTED:
@@ -165,7 +177,44 @@ namespace QuickBlueToothLE
             //Console.WriteLine($"Last Crank Event Time: {lastCrankEventTime}");
             Console.WriteLine($"Cumulative Revs:{cumulativeCrankRevolutions} - Last Crank Event Time: {lastCrankEventTime}");
 
-            s.SendTo(bytes, ep);
+            var deltaRevolutions = 0;
+
+            if( cumulativeCrankRevolutions < previousCumulativeCrankRevolutions)
+            {
+
+                deltaRevolutions = 65536 - previousCumulativeCrankRevolutions + cumulativeCrankRevolutions;
+
+            }
+            else
+            {
+                deltaRevolutions = cumulativeCrankRevolutions - previousCumulativeCrankRevolutions;
+            }
+
+            previousCumulativeCrankRevolutions = cumulativeCrankRevolutions;
+
+            var deltaTime = 0;
+
+            if (lastCrankEventTime < previousLastCrankEventTime)
+            {
+
+                deltaTime = 65536 - previousLastCrankEventTime + lastCrankEventTime;
+
+            }
+            else
+            {
+                deltaTime = lastCrankEventTime - previousLastCrankEventTime;
+            }
+
+            previousLastCrankEventTime = lastCrankEventTime;
+
+            RPM = 0;
+            if (deltaTime != 0) RPM =  (UInt16) ((UInt32)(60 * deltaRevolutions * 1024) / (UInt32)deltaTime);
+            else RPM = 0;
+            Console.WriteLine($"RPM:{RPM}");
+
+            //s.SendTo(bytes, ep);
+
+            s.SendTo(BitConverter.GetBytes(RPM), ep);
         }
 
         private static void DeviceWatcher_Stopped(DeviceWatcher sender, object args)

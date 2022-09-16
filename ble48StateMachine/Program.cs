@@ -29,7 +29,8 @@ namespace QuickBlueToothLE
         private static IPEndPoint ep = new IPEndPoint(broadcast, 3300);
         private static UInt16 previousCumulativeCrankRevolutions = 0;
         private static UInt16 previousLastCrankEventTime = 0;
-        private static UInt16 RPM = 0;
+        private static Int32 RPM = 0;
+        private static bool firstValueChange = false;
 
 
         static async Task Main(string[] args)
@@ -103,6 +104,7 @@ namespace QuickBlueToothLE
                                                         if (status == GattCommunicationStatus.Success)
                                                         {
                                                             characteristic.ValueChanged += Characteristic_ValueChanged;
+                                                            firstValueChange = false;
                                                             sensorState = SensorState.CONNECTED;
                                                             Console.WriteLine("Press Any Key to Exit application");
                                                         }
@@ -177,6 +179,14 @@ namespace QuickBlueToothLE
             //Console.WriteLine($"Last Crank Event Time: {lastCrankEventTime}");
             Console.WriteLine($"Cumulative Revs:{cumulativeCrankRevolutions} - Last Crank Event Time: {lastCrankEventTime}");
 
+            if(firstValueChange == false)
+            {
+                firstValueChange = true;
+                previousCumulativeCrankRevolutions = cumulativeCrankRevolutions;
+                previousLastCrankEventTime = lastCrankEventTime;
+            }
+
+
             var deltaRevolutions = 0;
 
             if( cumulativeCrankRevolutions < previousCumulativeCrankRevolutions)
@@ -208,7 +218,7 @@ namespace QuickBlueToothLE
             previousLastCrankEventTime = lastCrankEventTime;
 
             RPM = 0;
-            if (deltaTime != 0) RPM =  (UInt16) ((UInt32)(60 * deltaRevolutions * 1024) / (UInt32)deltaTime);
+            if (deltaTime != 0) RPM =  (Int32) ((UInt32)(60 * deltaRevolutions * 1024) / (UInt32)deltaTime);
             else RPM = 0;
             Console.WriteLine($"RPM:{RPM}");
 
@@ -243,12 +253,14 @@ namespace QuickBlueToothLE
 
         private static void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation args)
         {
-            //Console.WriteLine(args.Name);
+           // Console.WriteLine(args.Name);
 
+            //if (args.Name == "BTWIN CAD-37878")
             if (args.Name == "Bryton Cadence")
             {
                 device = args;
                 Console.WriteLine("Bryton Cadence detected");
+                //Console.WriteLine(args.Name + " detected");
                 var deviceID = device.Id;
                 Console.WriteLine($"Device id: {deviceID}");
             }
